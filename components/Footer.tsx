@@ -6,18 +6,18 @@ export default function Footer() {
       <div className="text-gray-500">
         <Link
           className="text-blue-600 hover:underline font-bold"
-          href="https://github.com/leap-ai/headshots-starter"
+          href="https://www.linkedin.com/in/ikhsangama/"
           target="_blank"
         >
-          Open-source
+          @IkhsanGama
         </Link>{" "}
         powered by{" "}
         <Link
           className="text-blue-600 hover:underline font-bold"
-          href="https://www.astria.ai/"
+          href="https://app.tryleap.ai/"
           target="_blank"
         >
-          Astria,{" "}
+          Leap-AI,{" "}
         </Link>
         <Link
           className="text-blue-600 hover:underline font-bold"
