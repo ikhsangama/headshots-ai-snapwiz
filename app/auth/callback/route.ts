@@ -25,9 +25,10 @@ export async function GET(req: NextRequest) {
     try {
       await supabase.auth.exchangeCodeForSession(code);
 
-      // ater exchanging the code, we should check if the user has a feature-flag row and a credits now, if not, we should create one
+      // after exchanging the code, we should check if the user has a feature-flag row and a credits now, if not, we should create one
 
       const { data: user, error: userError } = await supabase.auth.getUser();
+      // if user data in credit table doesn't exist, create initial credit to the user for the first time
 
       if (userError || !user) {
         console.error(
@@ -38,6 +39,27 @@ export async function GET(req: NextRequest) {
           `${requestUrl.origin}/login/failed?err=500`
         );
       }
+
+      const {data: userCreditExist, error: postgresError} = await supabase
+          .from('credits')
+          .select('*')
+          .eq('user_id', user.user?.id)
+          .single()
+
+      if (!userCreditExist) {
+        await supabase.from('credits').insert({ user_id: user.user?.id, credits: 3 });
+      }
+
+      if (postgresError) {
+        console.error(
+            "[login] [session] [500] Error getting user credit: ",
+            postgresError
+        );
+        return NextResponse.redirect(
+            `${requestUrl.origin}/login/failed?err=500`
+        );
+      }
+
     } catch (error) {
       if (isAuthApiError(error)) {
         console.error(
