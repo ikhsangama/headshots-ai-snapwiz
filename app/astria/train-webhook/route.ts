@@ -32,29 +32,25 @@ if (!appWebhookSecret) {
 export async function POST(request: Request) {
   // webhook workflow object: https://docs.tryleap.ai/webhooks
   type WebhookWorkflow = {
-    incomingData:{
-      id: string; // Unique ID of the workflow run
-      version_id: string; // Version of the workflow being run
-      status: "completed" | "running" | "failed"; // Current status of the workflow
-      created_at: string; // Date and time when the workflow was initiated
-      started_at: string | null; // Date and time when the workflow actually started, if applicable
-      ended_at: string | null; // Date and time when the workflow ended, if applicable
-      workflow_id: string; // ID of the workflow
-      error: string | null; // Any error that occurred during the workflow, or null if the workflow completed successfully
-      input: { // Inputs used in the workflow
-        [key: string]: any;
-      },
-      output: {
-        generated_image: string;
-      } | null; // Output of the workflow, or null if the workflow failed
-    }
+    id: string; // Unique ID of the workflow run
+    version_id: string; // Version of the workflow being run
+    status: "completed" | "running" | "failed"; // Current status of the workflow
+    created_at: string; // Date and time when the workflow was initiated
+    started_at: string | null; // Date and time when the workflow actually started, if applicable
+    ended_at: string | null; // Date and time when the workflow ended, if applicable
+    workflow_id: string; // ID of the workflow
+    error: string | null; // Any error that occurred during the workflow, or null if the workflow completed successfully
+    input: { // Inputs used in the workflow
+      [key: string]: any;
+    },
+    output: {
+      generated_image: string;
+    } | null; // Output of the workflow, or null if the workflow failed
   };
 
-  const webhookReq = (await request.json()) as WebhookWorkflow;
+  const incomingData = (await request.json()) as WebhookWorkflow;
 
-  console.log({webhookReq})
-
-  const { incomingData } = webhookReq;
+  console.log({incomingData})
 
   console.log({incomingData});
   const urlObj = new URL(request.url);
@@ -157,22 +153,7 @@ export async function POST(request: Request) {
       console.error({ modelUpdated });
     }
 
-    // const { data: model, error: modelError } = await supabase
-    //     .from("models")
-    //     .select("*")
-    //     .eq("modelId", incomingData.id)
-    //     .single();
-    //
-    // if (modelError) {
-    //   console.error({ modelError });
-    //   return NextResponse.json(
-    //       {
-    //         message: "Something went wrong!",
-    //       },
-    //       { status: 500 }
-    //   );
-    // }
-
+    console.log({modelUpdated});
     const { error: imageError } = await supabase
         .from("images")
         .insert({
