@@ -54,7 +54,7 @@ export default function TrainModelZone() {
         ) || [];
 
       // if user tries to upload more than 10 files, display a toast
-      if (newFiles.length + files.length > 10) {
+      if (newFiles.length + files.length > 4) {
         toast({
           title: "Too many images",
           description:
@@ -262,7 +262,7 @@ export default function TrainModelZone() {
           >
             <FormLabel>Samples</FormLabel>
             <FormDescription>
-              Upload 4-10 images of the person you want to generate headshots
+              Upload 2-4 images of the person you want to generate headshots
               for.
             </FormDescription>
             <div className="outline-dashed outline-2 outline-gray-100 hover:outline-blue-500 w-full h-full rounded-md p-4 flex justify-center align-middle">
