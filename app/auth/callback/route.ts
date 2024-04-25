@@ -49,17 +49,6 @@ export async function GET(req: NextRequest) {
       if (!userCreditExist) {
         await supabase.from('credits').insert({ user_id: user.user?.id, credits: 3 });
       }
-
-      if (postgresError) {
-        console.error(
-            "[login] [session] [500] Error getting user credit: ",
-            postgresError
-        );
-        return NextResponse.redirect(
-            `${requestUrl.origin}/login/failed?err=500`
-        );
-      }
-
     } catch (error) {
       if (isAuthApiError(error)) {
         console.error(
