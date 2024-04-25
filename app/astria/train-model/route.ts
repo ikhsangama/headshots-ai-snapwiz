@@ -50,10 +50,10 @@ export async function POST(request: Request) {
     );
   }
 
-  if (images?.length < 4) {
+  if (images?.length < 2) {
     return NextResponse.json(
       {
-        message: "Upload at least 4 sample images",
+        message: "Upload at least 2 sample images",
       },
       { status: 500 }
     );
@@ -117,47 +117,175 @@ export async function POST(request: Request) {
   }
 
   try {
-    const trainWebhook = `https://${process.env.VERCEL_URL}/astria/train-webhook`;
+    // const trainWebhook = `https://${process.env.VERCEL_URL}/astria/train-webhook`;
+    // const trainWenhookWithParams = `${trainWebhook}?user_id=${user.id}&webhook_secret=${appWebhookSecret}`;
+    //
+    // const promptWebhook = `https://${process.env.VERCEL_URL}/astria/prompt-webhook`;
+    // const promptWebhookWithParams = `${promptWebhook}?user_id=${user.id}&webhook_secret=${appWebhookSecret}`;
+    //
+    // const API_KEY = astriaApiKey;
+    // const DOMAIN = "https://api.astria.ai";
+    //
+    // const body = {
+    //   tune: {
+    //     title: name,
+    //     // Hard coded tune id of Realistic Vision v5.1 from the gallery - https://www.astria.ai/gallery/tunes
+    //     // https://www.astria.ai/gallery/tunes/690204/prompts
+    //     base_tune_id: 690204,
+    //     name: type,
+    //     branch: astriaTestModeIsOn ? "fast" : "sd15",
+    //     token: "ohwx",
+    //     image_urls: images,
+    //     callback: trainWenhookWithParams,
+    //     prompts_attributes: [
+    //       {
+    //         text: `portrait of ohwx ${type} wearing a business suit, professional photo, white background, Amazing Details, Best Quality, Masterpiece, dramatic lighting highly detailed, analog photo, overglaze, 80mm Sigma f/1.4 or any ZEISS lens`,
+    //         callback: promptWebhookWithParams,
+    //         num_images: 8,
+    //       },
+    //       {
+    //         text: `8k close up linkedin profile picture of ohwx ${type}, professional jack suite, professional headshots, photo-realistic, 4k, high-resolution image, workplace settings, upper body, modern outfit, professional suit, business, blurred background, glass building, office window`,
+    //         callback: promptWebhookWithParams,
+    //         num_images: 8,
+    //       },
+    //     ],
+    //   },
+    // };
+    //
+    // const response = await axios.post(DOMAIN + "/tunes", body, {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${API_KEY}`,
+    //   },
+    // });
+    //
+    // const { status, statusText, data: tune } = response;
+    //
+    // if (status !== 201) {
+    //   console.error({ status });
+    //   if (status === 400) {
+    //     return NextResponse.json(
+    //       {
+    //         message: "webhookUrl must be a URL address",
+    //       },
+    //       { status }
+    //     );
+    //   }
+    //   if (status === 402) {
+    //     return NextResponse.json(
+    //       {
+    //         message: "Training models is only available on paid plans.",
+    //       },
+    //       { status }
+    //     );
+    //   }
+    // }
+    //
+    // const { error: modelError, data } = await supabase
+    //   .from("models")
+    //   .insert({
+    //     modelId: tune.id, // store tune Id field to retrieve workflow object if needed later
+    //     user_id: user.id,
+    //     name,
+    //     type,
+    //   })
+    //   .select("id")
+    //   .single();
+    //
+    // if (modelError) {
+    //   console.error("modelError: ", modelError);
+    //   return NextResponse.json(
+    //     {
+    //       message: "Something went wrong!",
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
+    //
+    // // Get the modelId from the created model
+    // const modelId = data?.id;
+    //
+    // const { error: samplesError } = await supabase.from("samples").insert(
+    //   images.map((sample: string) => ({
+    //     modelId: modelId,
+    //     uri: sample,
+    //   }))
+    // );
+    //
+    // if (samplesError) {
+    //   console.error("samplesError: ", samplesError);
+    //   return NextResponse.json(
+    //     {
+    //       message: "Something went wrong!",
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
+    //
+    // if (stripeIsConfigured && _credits && _credits.length > 0) {
+    //   const subtractedCredits = _credits[0].credits - 1;
+    //   const { error: updateCreditError, data } = await supabase
+    //     .from("credits")
+    //     .update({ credits: subtractedCredits })
+    //     .eq("user_id", user.id)
+    //     .select("*");
+    //
+    //   console.log({ data });
+    //   console.log({ subtractedCredits });
+    //
+    //   if (updateCreditError) {
+    //     console.error({ updateCreditError });
+    //     return NextResponse.json(
+    //       {
+    //         message: "Something went wrong!",
+    //       },
+    //       { status: 500 }
+    //     );
+    //   }
+    // }
+
+    // using tryleap.ai instead of astria
+    const trainWebhook = `${process.env.VERCEL_URL}/astria/train-webhook`;
     const trainWenhookWithParams = `${trainWebhook}?user_id=${user.id}&webhook_secret=${appWebhookSecret}`;
 
     const promptWebhook = `https://${process.env.VERCEL_URL}/astria/prompt-webhook`;
     const promptWebhookWithParams = `${promptWebhook}?user_id=${user.id}&webhook_secret=${appWebhookSecret}`;
 
-    const API_KEY = astriaApiKey;
-    const DOMAIN = "https://api.astria.ai";
+    const API_KEY = process.env.LEAP_API_KEY;
 
+    const DOMAIN = "https://api.workflows.tryleap.ai";
+
+    // {
+    //     "workflow_id": "wkf_9UNOFTQyMmxEb1",
+    //     "webhook_url": "ikhsan.requestcatcher.com",
+    //     "input": {
+    //         "title": "Linkedin Profile",
+    //         "samples": [
+    //             "https://storage.googleapis.com/user-temp-uploads-prod/files/3e75c9e619fd4e42a30c267107c27e34.jpg",
+    //             "https://storage.googleapis.com/user-temp-uploads-prod/files/41e6e4dbe20d417c8c3a23b470b8512e.jpeg",
+    //             "https://storage.googleapis.com/user-temp-uploads-prod/files/8ec26e461736443b941ac91ed0affabd.jpg"
+    //         ],
+    //         "subject_type": "person"
+    //     }
+    // }
     const body = {
-      tune: {
+      workflow_id: process.env.LEAP_WORKFLOW_ID,
+      webhook_url: trainWenhookWithParams,
+      input: {
         title: name,
-        // Hard coded tune id of Realistic Vision v5.1 from the gallery - https://www.astria.ai/gallery/tunes
-        // https://www.astria.ai/gallery/tunes/690204/prompts
-        base_tune_id: 690204,
-        name: type,
-        branch: astriaTestModeIsOn ? "fast" : "sd15",
-        token: "ohwx",
-        image_urls: images,
-        callback: trainWenhookWithParams,
-        prompts_attributes: [
-          {
-            text: `portrait of ohwx ${type} wearing a business suit, professional photo, white background, Amazing Details, Best Quality, Masterpiece, dramatic lighting highly detailed, analog photo, overglaze, 80mm Sigma f/1.4 or any ZEISS lens`,
-            callback: promptWebhookWithParams,
-            num_images: 8,
-          },
-          {
-            text: `8k close up linkedin profile picture of ohwx ${type}, professional jack suite, professional headshots, photo-realistic, 4k, high-resolution image, workplace settings, upper body, modern outfit, professional suit, business, blurred background, glass building, office window`,
-            callback: promptWebhookWithParams,
-            num_images: 8,
-          },
-        ],
-      },
+        subject_type: type,
+        samples: images
+      }
     };
 
-    const response = await axios.post(DOMAIN + "/tunes", body, {
+    const response = await axios.post(DOMAIN + "/v1/runs", body, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
+        "X-Api-Key": API_KEY,
       },
     });
+
+    console.log({response})
 
     const { status, statusText, data: tune } = response;
 
@@ -165,40 +293,40 @@ export async function POST(request: Request) {
       console.error({ status });
       if (status === 400) {
         return NextResponse.json(
-          {
-            message: "webhookUrl must be a URL address",
-          },
-          { status }
+            {
+              message: "webhookUrl must be a URL address",
+            },
+            { status }
         );
       }
       if (status === 402) {
         return NextResponse.json(
-          {
-            message: "Training models is only available on paid plans.",
-          },
-          { status }
+            {
+              message: "Training models is only available on paid plans.",
+            },
+            { status }
         );
       }
     }
 
     const { error: modelError, data } = await supabase
-      .from("models")
-      .insert({
-        modelId: tune.id, // store tune Id field to retrieve workflow object if needed later
-        user_id: user.id,
-        name,
-        type,
-      })
-      .select("id")
-      .single();
+        .from("models")
+        .insert({
+          modelId: tune.id, // store tune Id field to retrieve workflow object if needed later
+          user_id: user.id,
+          name,
+          type,
+        })
+        .select("id")
+        .single();
 
     if (modelError) {
       console.error("modelError: ", modelError);
       return NextResponse.json(
-        {
-          message: "Something went wrong!",
-        },
-        { status: 500 }
+          {
+            message: "Something went wrong!",
+          },
+          { status: 500 }
       );
     }
 
@@ -206,29 +334,29 @@ export async function POST(request: Request) {
     const modelId = data?.id;
 
     const { error: samplesError } = await supabase.from("samples").insert(
-      images.map((sample: string) => ({
-        modelId: modelId,
-        uri: sample,
-      }))
+        images.map((sample: string) => ({
+          modelId: modelId,
+          uri: sample,
+        }))
     );
 
     if (samplesError) {
       console.error("samplesError: ", samplesError);
       return NextResponse.json(
-        {
-          message: "Something went wrong!",
-        },
-        { status: 500 }
+          {
+            message: "Something went wrong!",
+          },
+          { status: 500 }
       );
     }
 
     if (stripeIsConfigured && _credits && _credits.length > 0) {
       const subtractedCredits = _credits[0].credits - 1;
       const { error: updateCreditError, data } = await supabase
-        .from("credits")
-        .update({ credits: subtractedCredits })
-        .eq("user_id", user.id)
-        .select("*");
+          .from("credits")
+          .update({ credits: subtractedCredits })
+          .eq("user_id", user.id)
+          .select("*");
 
       console.log({ data });
       console.log({ subtractedCredits });
@@ -236,15 +364,16 @@ export async function POST(request: Request) {
       if (updateCreditError) {
         console.error({ updateCreditError });
         return NextResponse.json(
-          {
-            message: "Something went wrong!",
-          },
-          { status: 500 }
+            {
+              message: "Something went wrong!",
+            },
+            { status: 500 }
         );
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
+    console.error(e.response?.data?.message);
     return NextResponse.json(
       {
         message: "Something went wrong!",

@@ -56,6 +56,7 @@ export default function ClientSideModel({
                   <img
                     src={sample.uri}
                     className="rounded-md w-60 h-60 object-cover"
+                    key={sample.id}
                   />
                 ))}
               </div>
