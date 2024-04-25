@@ -121,13 +121,15 @@ export async function POST(request: Request) {
 
   try {
     if (resendApiKey) {
+      // optionally notify user email
       const resend = new Resend(resendApiKey);
-      await resend.emails.send({
-        from: "noreply@headshots.tryleap.ai",
+      const emailResponse = await resend.emails.send({
+        from: process.env.RESEND_EMAIL_FROM || 'noreply@noreply.com',
         to: user?.email ?? "",
         subject: "Your model was successfully trained!",
         html: `<h2>We're writing to notify you that your model training was successful! 1 credit has been used from your account.</h2>`,
       });
+      console.log({emailResponse});
     }
 
     const { data: modelUpdated, error: modelUpdatedError } = await supabase
