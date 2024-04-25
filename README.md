@@ -10,3 +10,57 @@ The app is powered by:
 - 💳 [Stripe](https://stripe.com/) for billing
 
 This website created by [Ikhsangama](https://www.linkedin.com/in/ikhsangama/) using template that is released under the [MIT License](https://choosealicense.com/licenses/mit/).
+
+# Sequence Diagram
+
+### Register / Login
+![img.png](img.png)
+```mermaid
+sequenceDiagram
+participant U as User
+participant S as Server
+participant A as Supabase - Auth
+participant DB as Supabase - DB
+
+U->>S: register/login(email)
+S->>A: signInWithMagicLink(email)
+A->>A: sending email
+A->>S: return OK
+S->>U: return OK
+note right of U: User open email
+U->>S: magicLink(confirmationURL)
+alt user first time login
+    S->>DB: Init 3 credits for user
+    DB->>S: Init credit created
+end
+S->>U: Successfully logged in
+```
+
+### Training image
+![img_1.png](img_1.png)
+```mermaid
+sequenceDiagram
+participant U as User
+participant S as Server
+participant DB as Supabase - DB
+participant AI as LeapAI
+
+U->>S: train model(name, gender, images)
+S->>AI: train model(name, gender, images)
+AI->>S: return workflow run ID
+S->>DB: insert model(workflowRunID, status processing)
+DB->>S: saved
+S->>DB: update credit(deduct 1 credit)
+DB->>S: saved
+S->>U: return OK
+note right of S: Incoming webhook
+AI->>S: completed(workflowRunID, generated image URI)
+alt resend is configured
+    S->>S: resend(email) notify user
+end
+S->>DB: update model(workflowRunID, status completed)
+DB->>S: saved
+S->>DB: insert image(modelID, generated image URI)
+DB->>S: saved
+S->>AI: return OK
+```
