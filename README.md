@@ -1,4 +1,7 @@
-# 👨‍💼 [Headshot AI - SnapWiz] - Professional Headshots with AI for LinkedIn Profile
+# 👨‍💼 [Headshot AI - SnapWiz](https://headshots-ai-snapwiz.vercel.app/) - Professional Headshots with AI for LinkedIn Profile
+
+Live: https://headshots-ai-snapwiz.vercel.app/ -
+You will got 3 credits for the first time to try!
 
 The app is powered by:
 - 🚀 [Leap-AI](https://www.astria.ai/) for AI model training & inference
