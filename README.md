@@ -4,7 +4,7 @@ Live: https://headshots-ai-snapwiz.vercel.app/ -
 You will got 3 credits for the first time to try!
 
 The app is powered by:
-- 🚀 [Leap-AI](https://www.astria.ai/) for AI model training & inference
+- 🚀 [Leap-AI](https://www.tryleap.ai/) for AI model training & inference
 - ▲ x ⚛️ [Next.js and React](https://nextjs.org/) for app and landing page
 - 🔋 [Supabase](https://supabase.com/) for DB & Auth
 - 📩 [Resend](https://resend.com/) to email user when headshots are ready
